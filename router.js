@@ -21,7 +21,7 @@ router.route('/users').
 				res.json({error:'', success: true, result: rows});
 			}
 			else {
-				res.json({error: err, success: true, result: []});
+				res.json({error: err, success: false, result: []});
 			}
 		});
 	})
@@ -32,23 +32,14 @@ router.route('/users').
 		    
 		    bcrypt.hash(req.body.password, salt, function(err, hash) {
 
-		    var post = {
-		        user_name: req.body.user_name,
-		        first_name: req.body.first_name,
-		        last_name: req.body.last_name,
-		        password: hash
-		    };
-
-		    var query = connection.query("INSERT INTO users (FirstName, LastName, Email, Phone, Password, Username) VALUES (?, ?, ?, ?, ?, ?)", [req.body.firstName, req.body.lastName, req.body.email, req.body.phone, req.body.password, req.body.username], function (error, rows, fields) {
-		        if (!error)
-		            res.json("Success");
-		        else {
-		            res.json("No Good");
-		        }
-		    });
-
-		    console.log(query.sql);
-
+			    var query = connection.query("INSERT INTO users (FirstName, LastName, Email, Phone, Username, Password) VALUES (?, ?, ?, ?, ?, ?)", [req.body.firstName, req.body.lastName, req.body.email, req.body.phone, req.body.username, hash], function (error, rows, fields) {
+			        if (!error) {
+			            res.json({error:'', success: true, result: []});
+			        }
+			        else {
+			           	res.json({error: err, success: false, result: []})
+			        }
+			    });
 		    });
 		});
 	})

@@ -3,12 +3,13 @@ var bcrypt = require('bcryptjs');
 
 var mysql = require('mysql');
 var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'letspark',
-    password: 'letspark1234',
-    database: 'parkerdb'
+    host: 'db4free.net',
+	user: 'letspark1234',
+	password: 'LetsPark1234',
+	database: 'letsparkdb'
 });
 connection.connect();
+
 
 router.get('/', function (req, res) {
 	res.json({ message: 'Parker API.' });
@@ -44,7 +45,7 @@ router.route('/users').
 		});
 	});
 
-router.post('/Login', function (req, res) {
+router.post('/login', function (req, res) {
 
 	connection.query('SELECT * FROM users WHERE Username = ?', [req.body.username], function (mysqlErr, rows, fields) {
 
@@ -59,7 +60,7 @@ router.post('/Login', function (req, res) {
 						res.json({error: 'Bcrypt Error.', success: false, result: []});
 	    			}
 	    			else if (match) {
-						res.json({error: '', success: true, result: []});
+						res.json({error: '', success: true, result: [rows[0]]});
 	    			}
 	    			else {
 	    				res.json({error: 'Incorrect password.', success: false, result: []});
@@ -72,6 +73,25 @@ router.post('/Login', function (req, res) {
 		}
 	});
 
+});
+
+
+
+router.route('/spots').get(function (req, res) {
+
+	if (((typeof req.query.userId) == 'undefined') || req.query.userId == '') {
+		res.json({error: 'No userId supplied.', success: false, result: []});
+	}
+	else {
+		connection.query('SELECT * FROM spots WHERE UserId = ?', [req.query.userId], function (mysqlErr, rows, fields) {
+			if (!mysqlErr) {
+				res.json({error: '', success: true, result: rows});
+			}
+			else {
+				res.json({error: 'Query Error.', success: false, result: []});
+			}
+		});
+	}
 });
 
 module.exports = router;

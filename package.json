@@ -4,6 +4,7 @@
   "description": "This repository serves as source control for the REST API for project 'Parker'.",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
